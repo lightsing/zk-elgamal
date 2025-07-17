@@ -1,0 +1,22 @@
+[workspace]
+members = [
+    "lib",
+    "program",
+    "script",
+]
+resolver = "2"
+
+[workspace.dependencies]
+sp1-sdk = "5.0"
+sp1-zkvm = "5.0"
+sp1-build = "5.0"
+
+curve25519-dalek-ng = "4.1"
+
+serde = { version = "1.0", default-features = false }
+
+elgamal-lib = { path = "lib" }
+
+[patch.crates-io]
+tiny-keccak = { git = "https://github.com/sp1-patches/tiny-keccak" }
+curve25519-dalek-ng = { git = "https://github.com/sp1-patches/curve25519-dalek-ng" }
