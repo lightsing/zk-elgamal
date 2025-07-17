@@ -1,5 +1,5 @@
 use rand::thread_rng;
-use sp1_sdk::{SP1Stdin, include_elf, CpuProver, Prover, SP1ProofMode};
+use sp1_sdk::{SP1Stdin, include_elf, CpuProver, Prover};
 use elgamal_lib::*;
 
 pub const ELF: &[u8] = include_elf!("elgamal-program");
