@@ -10,7 +10,3 @@ rand = "0.8"
 
 [build-dependencies]
 sp1-build.workspace = true
-
-[[bench]]
-harness = false
-name = "elgamal"
