@@ -43,6 +43,12 @@ fn main() {
 
     #[cfg(not(feature = "profiling"))]
     {
+        let now = std::time::Instant::now();
+        let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
+        let enc_total_proving_time = now.elapsed();
+        println!("- Total Proving Time: {enc_total_proving_time:?}");
+        client.verify(&proof, &verifying_key).unwrap();
+
         let mut stdin = SP1Stdin::new();
         stdin.write(&ExecMode::Baseline);
         stdin.write(&Mode::Encrypt);
@@ -55,10 +61,9 @@ fn main() {
 
         let now = std::time::Instant::now();
         let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
-        let enc_total_proving_time = now.elapsed();
-        println!("- Total Proving Time: {enc_total_proving_time:?}");
+        let enc_net_proving_time = now.elapsed() - enc_total_proving_time;
+        println!("- Net Proving Time: {enc_net_proving_time:?}");
         client.verify(&proof, &verifying_key).unwrap();
-        println!("- Proof verified");
     }
 
 
@@ -82,6 +87,12 @@ fn main() {
 
     #[cfg(not(feature = "profiling"))]
     {
+        let now = std::time::Instant::now();
+        let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
+        let dec_total_proving_time = now.elapsed();
+        println!("- Total Proving Time: {dec_total_proving_time:?}");
+        client.verify(&proof, &verifying_key).unwrap();
+
         let mut stdin = SP1Stdin::new();
         stdin.write(&ExecMode::Baseline);
         stdin.write(&Mode::Decrypt);
@@ -93,10 +104,9 @@ fn main() {
 
         let now = std::time::Instant::now();
         let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
-        let dec_total_proving_time = now.elapsed();
-        println!("- Total Proving Time: {dec_total_proving_time:?}");
+        let dec_net_proving_time = now.elapsed() - dec_total_proving_time;
+        println!("- Net Proving Time: {dec_net_proving_time:?}");
         client.verify(&proof, &verifying_key).unwrap();
-        println!("- Proof verified");
     }
     //     results.push((
     //         enc_total_instruction_count,
