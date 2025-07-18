@@ -95,6 +95,7 @@ fn run(
 
         // run baseline
         let mut stdin = SP1Stdin::new();
+        stdin.write(&repetitions);
         stdin.write(&ExecMode::Baseline);
         match mode {
             Mode::Encrypt => write_encrypt_stdin(case, &mut stdin),
