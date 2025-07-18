@@ -4,9 +4,13 @@ name = "elgamal-script"
 edition = "2021"
 
 [dependencies]
-sp1-sdk = { workspace = true, features = ["profiling"]}
+sp1-sdk.workspace = true
 elgamal-lib.workspace = true
 rand = "0.8"
 
 [build-dependencies]
 sp1-build.workspace = true
+
+
+[features]
+profiling = ["sp1-sdk/profiling"]

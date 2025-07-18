@@ -9,7 +9,7 @@ fn main() {
     sp1_sdk::utils::setup_logger();
 
     let client = CpuProver::new();
-    // let (proving_key, verifying_key) = client.setup(ELF);
+    let (proving_key, verifying_key) = client.setup(ELF);
 
     let mut rng = thread_rng();
 
@@ -24,6 +24,7 @@ fn main() {
 
     println!("[+] Running encrypt:");
 
+    #[cfg(feature = "profiling")]
     unsafe {
         env::set_var("TRACE_FILE", "encrypt.json");
     }
@@ -40,27 +41,30 @@ fn main() {
     let ct_vm: Ciphertext = public_values.read();
     assert_eq!(ct_vm, ciphertext);
 
-    // let mut stdin = SP1Stdin::new();
-    // stdin.write(&ExecMode::Baseline);
-    // stdin.write(&Mode::Encrypt);
-    // stdin.write(&public_key);
-    // stdin.write(&nonce);
-    // stdin.write(&message);
-    // let (_, report) = client.execute(&ELF, &stdin).run().unwrap();
-    // let enc_net_instruction_count = enc_total_instruction_count - report.total_instruction_count();
-    // println!("- Net Instructions: {enc_net_instruction_count}", );
+    #[cfg(not(feature = "profiling"))]
+    {
+        let mut stdin = SP1Stdin::new();
+        stdin.write(&ExecMode::Baseline);
+        stdin.write(&Mode::Encrypt);
+        stdin.write(&public_key);
+        stdin.write(&nonce);
+        stdin.write(&message);
+        let (_, report) = client.execute(&ELF, &stdin).run().unwrap();
+        let enc_net_instruction_count = enc_total_instruction_count - report.total_instruction_count();
+        println!("- Net Instructions: {enc_net_instruction_count}", );
 
-    // let now = std::time::Instant::now();
-    // let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
-    // let enc_total_proving_time = now.elapsed();
-    // println!("- Total Proving Time: {enc_total_proving_time:?}");
-    // client.verify(&proof, &verifying_key).unwrap();
-    // println!("- Proof verified");
-
+        let now = std::time::Instant::now();
+        let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
+        let enc_total_proving_time = now.elapsed();
+        println!("- Total Proving Time: {enc_total_proving_time:?}");
+        client.verify(&proof, &verifying_key).unwrap();
+        println!("- Proof verified");
+    }
 
 
     println!("[+] Running decrypt:");
 
+    #[cfg(feature = "profiling")]
     unsafe {
         env::set_var("TRACE_FILE", "decrypt.json");
     }
@@ -76,22 +80,24 @@ fn main() {
     let decrypted_message_vm: RistrettoPoint = public_values.read();
     assert_eq!(decrypted_message_vm, secret_key.decrypt(&ciphertext));
 
-    // let mut stdin = SP1Stdin::new();
-    // stdin.write(&ExecMode::Baseline);
-    // stdin.write(&Mode::Decrypt);
-    // stdin.write(&secret_key);
-    // stdin.write(&ciphertext);
-    // let (_, report) = client.execute(&ELF, &stdin).run().unwrap();
-    // let dec_net_instruction_count = dec_total_instruction_count - report.total_instruction_count();
-    // println!("- Net Instructions: {dec_net_instruction_count}");
-    //
-    // let now = std::time::Instant::now();
-    // let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
-    // let dec_total_proving_time = now.elapsed();
-    // println!("- Total Proving Time: {dec_total_proving_time:?}");
-    // client.verify(&proof, &verifying_key).unwrap();
-    // println!("- Proof verified");
-    //
+    #[cfg(not(feature = "profiling"))]
+    {
+        let mut stdin = SP1Stdin::new();
+        stdin.write(&ExecMode::Baseline);
+        stdin.write(&Mode::Decrypt);
+        stdin.write(&secret_key);
+        stdin.write(&ciphertext);
+        let (_, report) = client.execute(&ELF, &stdin).run().unwrap();
+        let dec_net_instruction_count = dec_total_instruction_count - report.total_instruction_count();
+        println!("- Net Instructions: {dec_net_instruction_count}");
+
+        let now = std::time::Instant::now();
+        let proof = client.prove(&proving_key, &stdin).compressed().run().unwrap();
+        let dec_total_proving_time = now.elapsed();
+        println!("- Total Proving Time: {dec_total_proving_time:?}");
+        client.verify(&proof, &verifying_key).unwrap();
+        println!("- Proof verified");
+    }
     //     results.push((
     //         enc_total_instruction_count,
     //         enc_net_instruction_count,
@@ -101,6 +107,7 @@ fn main() {
     //         dec_total_proving_time,
     //     ));
     // }
+    //
 
     // // Print avg
     //
